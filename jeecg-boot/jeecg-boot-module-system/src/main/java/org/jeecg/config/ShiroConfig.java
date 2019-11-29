@@ -66,6 +66,9 @@ public class ShiroConfig {
 				filterChainDefinitionMap.put(url,"anon");
 			}
 		}
+		//微信小程序接口
+        filterChainDefinitionMap.put("/wx/**", "anon");
+
 		//cas验证登录
 		filterChainDefinitionMap.put("/cas/client/validateLogin", "anon");
 		// 配置不会被拦截的链接 顺序判断

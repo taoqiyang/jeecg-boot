@@ -95,9 +95,9 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false
+          url: jdbc:mysql://182.92.242.82:3306/sdyy?characterEncoding=UTF-8&useUnicode=true&useSSL=false
           username: root
-          password: 12345678
+          password: sdyy112233
           driver-class-name: com.mysql.jdbc.Driver
           # 多数据源配置
           #multi-datasource1:
@@ -178,6 +178,7 @@ jeecg :
 logging:
   level:
     org.jeecg.modules.system.mapper : debug
+    cn.binarywang.wx.miniapp: debug
 #cas单点登录
 cas:
   prefixUrl: http://cas.example.org:8443/cas

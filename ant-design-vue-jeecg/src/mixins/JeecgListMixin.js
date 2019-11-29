@@ -195,6 +195,12 @@ export const JeecgListMixin = {
         this.isorter.order = "ascend" == sorter.order ? "asc" : "desc"
       }
       this.ipagination = pagination;
+      
+      this.filters = {}
+      Object.keys(filters).forEach(key => {
+        this.filters[key] = filters[key].length > 1 ? filters[key] : filters[key][0]
+      })
+      
       this.loadData();
     },
     handleToggleSearch(){

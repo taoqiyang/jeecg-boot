@@ -330,6 +330,12 @@
 			<version>${qc.cos.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>3.6.0</version>
+        </dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
