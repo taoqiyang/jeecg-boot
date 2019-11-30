@@ -5,13 +5,16 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
-            <a-form-item label="呢称">
-              <a-input placeholder="请输入用户呢称" v-model="queryParam.nickName"></a-input>
+            <a-form-item label="标题">
+              <a-input placeholder="请输入标题" v-model="queryParam.title"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="手机号">
-              <a-input placeholder="请输入用户手机号" v-model="queryParam.mobile"></a-input>
+            <a-form-item label="发布状态">
+              <a-select v-model="queryParam.sendStatus" placeholder="请选择发布状态">
+                <a-select-option :value="0">未发布</a-select-option>
+                <a-select-option :value="1">已发布</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -32,11 +35,8 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button> -->
-      <!-- <a-button type="primary" icon="download" @click="handleExportXls('微信用户表')">导出</a-button> -->
-      <!-- <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
-        <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>-->
+      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+      <!-- <a-button type="primary" icon="download" @click="handleExportXls('免费试听课程')">导出</a-button> -->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
@@ -56,7 +56,7 @@
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
         <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-      </div> -->
+      </div>-->
 
       <a-table
         ref="table"
@@ -96,41 +96,60 @@
           >下载</a-button>
         </template>
 
-        <span slot="vipLevel" slot-scope="vipLevel,record">
-          <a-tag
-            :color="vipLevel === 0 ? 'volcano' : 'green'"
-          >{{record.vipLevel_dictText}}</a-tag>
+        <span slot="sendStatus" slot-scope="sendStatus,record">
+          <a-tag :color="sendStatus === 0 ? 'volcano' : 'green'">{{record.sendStatus_dictText}}</a-tag>
         </span>
 
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a-menu-item>
+            <a-popconfirm
+              :title="`确定${record.sendStatus === 0 ? '发布' : '取消发布'}吗?`"
+              @confirm="() => handleSend(record)"
+            >
+              <a>{{record.sendStatus === 0 ? '发布' : '取消发布'}}</a>
+            </a-popconfirm>
+          </a-menu-item>
 
           <a-divider type="vertical"/>
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-            <a>删除</a>
-          </a-popconfirm>
+          <a-dropdown>
+            <a class="ant-dropdown-link">
+              更多
+              <a-icon type="down"/>
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item @click="handleEdit(record)">
+                <a>编辑</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </span>
       </a-table>
     </div>
 
-    <wxUser-modal ref="modalForm" @ok="modalFormOk"></wxUser-modal>
+    <freeClass-modal ref="modalForm" @ok="modalFormOk"></freeClass-modal>
   </a-card>
 </template>
 
 <script>
 
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import WxUserModal from './WxUserModal'
+import FreeClassModal from './modules/FreeClassModal'
+import { httpAction } from '@/api/manage'
 
 export default {
-  name: "WxUserList",
+  name: "FreeClassList",
   mixins: [JeecgListMixin],
   components: {
-    WxUserModal
+    FreeClassModal
   },
   data () {
     return {
-      description: '微信用户表管理页面',
+      description: '免费试听课程管理页面',
       // 表头
       columns: [
         // {
@@ -144,47 +163,27 @@ export default {
         //   }
         // },
         {
-          title: '呢称',
+          title: '标题',
           align: "center",
-          dataIndex: 'nickName'
+          dataIndex: 'title'
         },
         {
-          title: '性别',
+          title: '封面图片',
           align: "center",
-          dataIndex: 'gender',
-          filters: [ // 筛选功能，该数组表示刷选的选项值，change事件获取的为 value，text为展示内容
-            { text: '男', value: '1' },
-            { text: '女', value: '0' },
-          ],
-          filterMultiple: false,
-          customRender: function (t, r, index) {
-            return r.gender_dictText;
-          }
+          dataIndex: 'cover',
+          scopedSlots: { customRender: 'imgSlot' }
         },
         {
-          title: '城市',
+          title: '视频地址',
           align: "center",
-          dataIndex: 'city'
+          dataIndex: 'videoUrl'
         },
         {
-          title: '省份',
+          title: '发布状态',
           align: "center",
-          dataIndex: 'province'
-        },
-        {
-          title: '手机号',
-          align: "center",
-          dataIndex: 'mobile',
-          customRender: function (t, r, index) {
-            return r.mobile || '未设置';
-          }
-        },
-        {
-          title: '会员级别',
-          align: "center",
-          dataIndex: 'vipLevel',
-          sorter: true,
-          scopedSlots: { customRender: 'vipLevel' },
+          dataIndex: 'sendStatus',
+          scopedSlots: { customRender: 'sendStatus' },
+          width: 60
         },
         {
           title: '操作',
@@ -194,25 +193,36 @@ export default {
         }
       ],
       url: {
-        list: "/admin/wx/user/list",
-        delete: "/admin/wx/user/delete",
-        deleteBatch: "/admin/wx/userdeleteBatch",
-        exportXlsUrl: "/admin/wx/user/exportXls",
-        importExcelUrl: "/admin/wx/user/importExcel",
-      },
-      dictOptions: {
+        list: "/free_class/freeClass/list",
+        delete: "/free_class/freeClass/delete",
+        deleteBatch: "/free_class/freeClass/deleteBatch",
+        exportXlsUrl: "/free_class/freeClass/exportXls",
+        importExcelUrl: "free_class/freeClass/importExcel",
+        edit: "/free_class/freeClass/edit",
       },
     }
   },
   computed: {
-    importExcelUrl: function () {
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-    }
+    
   },
   methods: {
-    initDictConfig () {
+    handleSend (record) {
+      let formData = {
+        id: record.id,
+        sendStatus: record.sendStatus === 0 ? 1 : 0
+      }
+      var that = this;
+      httpAction(this.url.edit, formData, 'put').then((res) => {
+        if (res.success) {
+          that.$message.success(res.message);
+          that.loadData();
+        } else {
+          that.$message.warning(res.message);
+        }
+      }).catch(e => {
+        console.error(e)
+      })
     }
-
   }
 }
 </script>

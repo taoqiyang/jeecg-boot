@@ -1,56 +1,63 @@
 <template>
-  <a-modal
+  <a-drawer
     :title="title"
     :width="width"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    @ok="handleOk"
-    @cancel="handleCancel"
-    cancelText="关闭">
+    placement="right"
+    :closable="false"
+    @close="close"
+    :visible="visible">
+  
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-
-        <a-form-item label="openId" :labelCol="labelCol" :wrapperCol="wrapperCol" disabled>
-          <a-input v-decorator="[ 'openid', validatorRules.openid]" placeholder="请输入openId"></a-input>
+        <a-form-item label="openId" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-input v-decorator="[ 'openId', validatorRules.openId]" placeholder="请输入openId" readOnly></a-input>
         </a-form-item>
         <a-form-item label="呢称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'nickname', validatorRules.nickname]" placeholder="请输入呢称"></a-input>
+          <a-input v-decorator="[ 'nickName', validatorRules.nickName]" placeholder="请输入呢称" readOnly></a-input>
         </a-form-item>
         <a-form-item label="性别" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input-number v-decorator="[ 'gender', validatorRules.gender]" placeholder="请输入性别" style="width: 100%"/>
+          <a-select v-decorator="[ 'gender', {}]" placeholder="请选择性别" disabled>
+            <a-select-option :value="0">女</a-select-option>
+            <a-select-option :value="1">男</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="城市" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'city', validatorRules.city]" placeholder="请输入城市"></a-input>
+          <a-input v-decorator="[ 'city', validatorRules.city]" placeholder="请输入城市" readOnly></a-input>
         </a-form-item>
         <a-form-item label="省份" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'province', validatorRules.province]" placeholder="请输入省份"></a-input>
+          <a-input v-decorator="[ 'province', validatorRules.province]" placeholder="请输入省份" readOnly></a-input>
         </a-form-item>
         <a-form-item label="国家" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'country', validatorRules.country]" placeholder="请输入国家"></a-input>
+          <a-input v-decorator="[ 'country', validatorRules.country]" placeholder="请输入国家" readOnly></a-input>
         </a-form-item>
         <a-form-item label="头像地址" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'avatarurl', validatorRules.avatarurl]" placeholder="请输入头像地址"></a-input>
+          <a-input v-decorator="[ 'avatarUrl', validatorRules.avatarUrl]" placeholder="请输入头像地址" readOnly></a-input>
         </a-form-item>
         <a-form-item label="微信统一用户标识" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'unionid', validatorRules.unionid]" placeholder="请输入微信统一用户标识"></a-input>
+          <a-input v-decorator="[ 'unionId', validatorRules.unionId]" placeholder="未获取" readOnly></a-input>
         </a-form-item>
         <a-form-item label="手机号" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="[ 'mobile', validatorRules.mobile]" placeholder="请输入手机号"></a-input>
         </a-form-item>
         <a-form-item label="会员级别" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input-number v-decorator="[ 'vipLevel', validatorRules.vipLevel]" placeholder="请输入会员级别" style="width: 100%"/>
+          <a-select v-decorator="[ 'vipLevel', {}]" placeholder="请选择会员级别">
+            <a-select-option :value="0">非会员</a-select-option>
+            <a-select-option :value="1">会员</a-select-option>
+          </a-select>
         </a-form-item>
-
+        
       </a-form>
     </a-spin>
-  </a-modal>
+    <a-button type="primary" @click="handleOk">确定</a-button>
+    <a-button type="primary" @click="handleCancel">取消</a-button>
+  </a-drawer>
 </template>
 
 <script>
 
   import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
-
+  
   export default {
     name: "WxUserModal",
     components: { 
@@ -73,20 +80,20 @@
 
         confirmLoading: false,
         validatorRules:{
-        openid:{rules: [{ required: true, message: '请输入openId!' }]},
-        nickname:{rules: [{ required: true, message: '请输入呢称!' }]},
+        openId:{rules: [{ required: true, message: '请输入openId!' }]},
+        nickName:{rules: [{ required: true, message: '请输入呢称!' }]},
         gender:{},
         city:{},
         province:{},
         country:{},
-        avatarurl:{},
-        unionid:{},
+        avatarUrl:{},
+        unionId:{},
         mobile:{},
         vipLevel:{rules: [{ required: true, message: '请输入会员级别!' }]},
         },
         url: {
-          add: "/./wxUser/add",
-          edit: "/./wxUser/edit",
+          add: "/admin/wx/user/add",
+          edit: "/admin/wx/user/edit",
         }
      
       }
@@ -102,7 +109,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'openid','nickname','gender','city','province','country','avatarurl','unionid','mobile','vipLevel'))
+          this.form.setFieldsValue(pick(this.model,'openId','nickName','gender','city','province','country','avatarUrl','unionId','mobile','vipLevel'))
         })
       },
       close () {
@@ -145,10 +152,18 @@
         this.close()
       },
       popupCallback(row){
-        this.form.setFieldsValue(pick(row,'openid','nickname','gender','city','province','country','avatarurl','unionid','mobile','vipLevel'))
-      },
-
+        this.form.setFieldsValue(pick(row,'openId','nickName','gender','city','province','country','avatarUrl','unionId','mobile','vipLevel'))
+      }
       
     }
   }
 </script>
+
+<style lang="less" scoped>
+/** Button按钮间距 */
+  .ant-btn {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    float: right;
+  }
+</style>

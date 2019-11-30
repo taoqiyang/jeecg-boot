@@ -67,6 +67,7 @@ public class WxUser implements Serializable {
     private String updateBy;
 	/**会员级别*/
 	@Excel(name = "会员级别", width = 15)
+    @Dict(dicCode = "vipLevel")
     private Integer vipLevel;
 	/**创建日期*/
 	@Excel(name = "创建日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")

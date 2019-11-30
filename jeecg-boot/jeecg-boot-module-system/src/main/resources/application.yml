@@ -10,8 +10,8 @@ swagger:
 wx:
   miniapp:
     configs:
-        - appid: wx54f2bccf846435c6
-          secret: 83a3244d55199f7f528ac5a2c363255c
+        - appid: wxf11c2dc12fc5585b
+          secret: 057e0ce2c305f25950862ff1c400ca3e
           token: #微信小程序消息服务器配置的token
           aesKey: #微信小程序消息服务器配置的EncodingAESKey
           msgDataFormat: JSON

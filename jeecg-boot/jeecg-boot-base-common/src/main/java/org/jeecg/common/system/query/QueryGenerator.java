@@ -153,10 +153,10 @@ public class QueryGenerator {
 					QueryRuleEnum rule = convert2Rule(value);
 					value = replaceValue(rule,value);
 					// add -begin 添加判断为字符串时设为全模糊查询
-					//if( (rule==null || QueryRuleEnum.EQ.equals(rule)) && "class java.lang.String".equals(type)) {
-						// 可以设置左右模糊或全模糊，因人而异
-						//rule = QueryRuleEnum.LIKE;
-					//}
+					if( (rule==null || QueryRuleEnum.EQ.equals(rule)) && "class java.lang.String".equals(type)) {
+//						 可以设置左右模糊或全模糊，因人而异
+						rule = QueryRuleEnum.LIKE;
+					}
 					// add -end 添加判断为字符串时设为全模糊查询
 					addEasyQuery(queryWrapper, name, rule, value);
 				}
@@ -628,8 +628,6 @@ public class QueryGenerator {
 	
 	/**
 	 *   根据权限相关配置生成相关的SQL 语句
-	 * @param searchObj
-	 * @param parameterMap
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -671,8 +669,6 @@ public class QueryGenerator {
 	
 	/**
 	  * 根据权限相关配置 组装mp需要的权限
-	 * @param searchObj
-	 * @param parameterMap
 	 * @return
 	 */
 	public static void installAuthMplus(QueryWrapper<?> queryWrapper,Class<?> clazz) {

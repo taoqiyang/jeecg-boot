@@ -151,7 +151,7 @@ jeecg :
     endpoint: oss-cn-beijing.aliyuncs.com
     accessKey: ??
     secretKey: ??
-    bucketName: jeecgos
+    bucketName: eduvideoonline
     properties:
       aliyun:
         protocol: https
